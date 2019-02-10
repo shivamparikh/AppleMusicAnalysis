@@ -28,15 +28,15 @@ This function shows plays over time using the play counts of individual songs an
 ### Using Filters
 You can build a filter function by calling 'single_filter()' or 'multi_filter()' functions. Then, you can pass these filters in to the processing functions to narrow down results.
 Some examples of code and results are shown below.
-1) Count of Scores Added to Library
+1) Count of Scores Added to Library  
 'plot_years_added(o, True, single_filter('Grouping', 'Scores'))'
 ![Scores Added](./years_added_scores.png "Score Count")
-2) Count of Music by Hans Zimmer Added to Library
+2) Count of Music by Hans Zimmer Added to Library  
 'plot_years_added(o, True, single_filter('Artist', 'Hans Zimmer', contains=True))'
 ![Hans Added](./years_added_hans.png "Hans Count")
-3) Count of Bollywood Music Added to Library
+3) Count of Bollywood Music Added to Library  
 'plot_years_added(o, True, single_filter('Genre', 'Bollywood'))'
 ![Bollywood Added](./years_added_bollywood.png "Bollywood Count")
-4) Count of Music by Hans Zimmer or Alan Silvestri by the Year Made
+4) Count of Music by Hans Zimmer or Alan Silvestri by the Year Made  
 'plot_years_made(o, True, multi_filter('Artist', ['Hans Zimmer', 'Alan Silvestri'], contains=True))'
 ![Zimmer Silvestrie Added](./years_made_zimmer_silvestri.png "Zimmer Silvestri Made")
