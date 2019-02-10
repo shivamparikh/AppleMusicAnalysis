@@ -1,9 +1,11 @@
-###Shivam Parikh###
+###Shivam Parikh, Copyright 2019###
+### Please do not share or copy without credit to the author.
 #   Music analytics program to generate conclusions on music listening preferences
 import matplotlib.pyplot as plt
 import pickle
 import numpy
 from datetime import datetime
+import os
 
 def load_pickle(fname):
     with open(fname, 'rb') as f:
@@ -11,9 +13,15 @@ def load_pickle(fname):
     f.close()
     return output
 
-o = load_pickle('recent_parsed.pkl')
+def load_all(dir):
+    ls = []
+    for file in os.listdir(dir):
+        if file.endswith(".pkl"):
+            ls.append(os.path.join(dir, file))
+    print(ls)
+    return ls
 
-def plot_years_made(compute=False, filter=None):
+def plot_years_made(o, compute=False, filter=None):
     if(compute):
         years = {}
         if(filter):
@@ -21,14 +29,17 @@ def plot_years_made(compute=False, filter=None):
         else:
             f_songs = o['songs']
         for s in f_songs:
-            val = s['Year']
+            val = s.get('Year', -1)
+            if(val == -1):
+                print(s)
+                continue
             years[val] = years.get(val, 0) + 1
     else:
         years = o['year_made']
-    plt.bar(years.keys(), years.values(), 0.5, color='b')
+    plt.bar(years.keys(), years.values(), 0.5, color='r')
     plt.show()
 
-def plot_years_added(compute=False, filter=None):
+def plot_years_added(o, compute=False, filter=None):
     if(compute):
         years = {}
         if(filter):
@@ -52,14 +63,20 @@ def plot_play_count(list):
     ls = sorted(ls, key=lambda x:x[0])
     x = [l[0] for l in ls]
     y = [l[1] for l in ls]
-    plt.plot(x, y, 'b-')
+    plt.plot(x, y, 'g-')
     plt.show()
 
-def genre_pie(compute=False, filter=None):
+def genre_pie(o, compute=False, filter=None):
     if(compute):
         genres = {}
-        for s in songs:
-            pass
+        for s in o['songs']:
+            if(s['Genre'] == 'Hip-Hop/Rap'):
+                g = 'Hip Hop/Rap'
+            else:
+                g = s['Genre']
+            if('Grouping' in s.keys()):
+                g += "/" + s['Grouping']
+            genres[g] = genres.get(g, 0) + 1
     else:
         genres = o['genres']
     total = sum(genres.values())
@@ -72,6 +89,43 @@ def genre_pie(compute=False, filter=None):
     ax1.axis('equal')
     plt.show()
 
-# plot_years_added()
-# plot_years_made()
-genre_pie()
+def single_filter(category, criteria, contains=False):
+    def filter(songs):
+        ls = []
+        for s in songs:
+            if(contains):
+                if(criteria in s.get(category, '')):
+                    ls.append(s)
+            else:
+                if(s.get(category, '') == criteria):
+                    ls.append(s)
+        return ls
+    return filter
+
+def multi_filter(category, criteria_list, contains=False):
+    def filter(songs):
+        ls = []
+        if(contains):
+            for s in songs:
+                for c in criteria_list:
+                    if(c in s.get(category, '')):
+                        ls.append(s)
+                        continue
+        else:
+            for s in songs:
+                for c in criteria_list:
+                    if(c == s.get(category, '')):
+                        ls.append(s)
+                        continue
+        return ls
+    return filter
+
+
+
+o = load_pickle('recent_parsed.pkl')
+# plot_years_added(o)
+# plot_years_made(o)
+plot_years_added(o, True, single_filter('Genre', 'Hip-Hop/Rap'))
+# genre_pie(o, True)
+# ls = load_all("./xml")
+# plot_play_count(ls)
